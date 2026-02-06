@@ -2,7 +2,7 @@
 MPC-Based Training Data Generation for VPP Optimization.
 
 This module generates training data using a Model Predictive Control approach:
-1. True battery state tracked by AdvancedElectrochemicalModel (nonlinear physics)
+1. True battery state tracked by NonlinearBatterySimulator (nonlinear physics)
 2. PerfectForesightOptimizer plans with linear approximation
 3. Only first action taken, then true physics stepped forward
 4. Model mismatch creates realistic correction behavior for student to learn
@@ -22,12 +22,6 @@ from typing import Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from ..config import ResourceConfig
-from ..models.battery import (
-    AdvancedElectrochemicalModel,
-    BatteryParameters,
-    BatteryState,
-)
 from ..optimization.offline import BatteryConstraints, PerfectForesightOptimizer
 
 logging.basicConfig(
@@ -197,13 +191,133 @@ class LoadGenerator:
         return loads
 
 
+class NonlinearBatterySimulator:
+    """Nonlinear battery simulator for data generation.
+
+    Provides realistic model mismatch vs the linear optimizer through:
+    - Energy-based SOC dynamics (correct conservation)
+    - C-rate dependent efficiency (η drops at high power)
+    - Soft power limits near SOC boundaries
+    - Self-discharge
+
+    The linear optimizer assumes constant efficiency and hard SOC limits,
+    so this model creates genuine planning/execution mismatch.
+    """
+
+    def __init__(
+        self,
+        energy_capacity: float,
+        max_power: float,
+        base_charge_efficiency: float,
+        base_discharge_efficiency: float,
+        soc_min: float,
+        soc_max: float,
+        initial_soc: float,
+        self_discharge_rate: float = 0.0001,  # per hour (0.01%/hr)
+    ):
+        self.energy_capacity = energy_capacity  # kWh
+        self.max_power = max_power  # kW
+        self.base_charge_eff = base_charge_efficiency
+        self.base_discharge_eff = base_discharge_efficiency
+        self.soc_min = soc_min
+        self.soc_max = soc_max
+        self.soc = initial_soc
+        self.self_discharge_rate = self_discharge_rate
+
+    def _effective_efficiency(self, power: float, is_charging: bool) -> float:
+        """C-rate dependent efficiency: drops at high power.
+
+        Models internal resistance losses that scale with I^2.
+        At 100% power, efficiency drops by ~5% from base.
+        At 50% power, drop is ~1.25%.
+        """
+        c_rate = abs(power) / self.max_power  # 0 to 1
+        efficiency_drop = 0.05 * c_rate ** 2  # Quadratic loss
+        base = self.base_charge_eff if is_charging else self.base_discharge_eff
+        return max(0.7, base - efficiency_drop)
+
+    def _soft_power_limit(self, power: float) -> float:
+        """Apply soft power limits near SOC boundaries.
+
+        Linearly reduces available power when SOC is within 5% of limits.
+        This prevents the hard boundary behavior the linear optimizer can't predict.
+        """
+        margin = 0.05  # 5% SOC margin for soft limiting
+
+        if power > 0:  # Charging
+            headroom = self.soc_max - self.soc
+            if headroom < margin:
+                scale = max(0.0, headroom / margin)
+                power *= scale
+        else:  # Discharging
+            headroom = self.soc - self.soc_min
+            if headroom < margin:
+                scale = max(0.0, headroom / margin)
+                power *= scale
+
+        return power
+
+    def update(self, power_setpoint: float, dt_hours: float) -> float:
+        """Step the battery forward in time.
+
+        Args:
+            power_setpoint: Commanded power in kW (positive=charge, negative=discharge)
+            dt_hours: Time step in hours
+
+        Returns:
+            Actual power executed (after limits and efficiency)
+        """
+        # Clip to max power
+        actual_power = np.clip(power_setpoint, -self.max_power, self.max_power)
+
+        # Apply soft SOC limits
+        actual_power = self._soft_power_limit(actual_power)
+
+        # Calculate energy with nonlinear efficiency
+        if actual_power > 0:  # Charging
+            eff = self._effective_efficiency(actual_power, is_charging=True)
+            energy_stored = actual_power * eff * dt_hours  # kWh into battery
+        elif actual_power < 0:  # Discharging
+            eff = self._effective_efficiency(actual_power, is_charging=False)
+            energy_stored = actual_power / eff * dt_hours  # kWh out of battery (negative)
+        else:
+            energy_stored = 0.0
+
+        # Update SOC
+        delta_soc = energy_stored / self.energy_capacity
+        new_soc = self.soc + delta_soc
+
+        # Apply self-discharge
+        new_soc -= self.self_discharge_rate * dt_hours
+
+        # Hard clamp (safety)
+        new_soc = np.clip(new_soc, self.soc_min, self.soc_max)
+
+        # If we hit a limit, back-calculate what power was actually used
+        actual_delta_soc = new_soc - self.soc
+        if abs(actual_delta_soc) < abs(delta_soc) and abs(delta_soc) > 1e-10:
+            # SOC was clipped - actual power was less than requested
+            actual_energy = actual_delta_soc * self.energy_capacity
+            if actual_power > 0:
+                actual_power = actual_energy / (eff * dt_hours) if dt_hours > 0 else 0.0
+            elif actual_power < 0:
+                actual_power = actual_energy * eff / dt_hours if dt_hours > 0 else 0.0
+
+        self.soc = new_soc
+        return actual_power
+
+    def reset(self, soc: float) -> None:
+        """Reset battery to given SOC."""
+        self.soc = soc
+
+
 class DataGenerator:
     """MPC-based training data generator.
 
     Uses Model Predictive Control approach:
-    - AdvancedElectrochemicalModel tracks true battery state
+    - NonlinearBatterySimulator tracks true battery state (nonlinear physics)
     - PerfectForesightOptimizer plans with linear approximation
-    - First action taken, then true physics stepped
+    - Plan applied to true physics, re-solved periodically
     - Model mismatch creates realistic correction behavior
     """
 
@@ -231,32 +345,17 @@ class DataGenerator:
         # Initialize true battery model (nonlinear physics)
         self.battery = self._create_battery_model()
 
-    def _create_battery_model(self) -> AdvancedElectrochemicalModel:
-        """Create the true physics battery model."""
-        # Battery parameters for electrochemical model
-        # Assuming 400V nominal voltage
-        nominal_voltage = 400.0
-        params = BatteryParameters(
-            nominal_capacity=self.config.energy_capacity_kwh * 1000 / nominal_voltage,  # Ah
-            nominal_voltage=nominal_voltage,
-            max_voltage=420.0,
-            min_voltage=320.0,
-            max_current=self.config.max_power_kw * 1000 / nominal_voltage,  # A
-            internal_resistance=0.05,  # Ohm
-            charge_efficiency=self.config.charge_efficiency,
-            discharge_efficiency=self.config.discharge_efficiency,
-            max_soc=self.config.soc_max,
-            min_soc=self.config.soc_min,
+    def _create_battery_model(self) -> NonlinearBatterySimulator:
+        """Create the true nonlinear physics battery model."""
+        return NonlinearBatterySimulator(
+            energy_capacity=self.config.energy_capacity_kwh,
+            max_power=self.config.max_power_kw,
+            base_charge_efficiency=self.config.charge_efficiency,
+            base_discharge_efficiency=self.config.discharge_efficiency,
+            soc_min=self.config.soc_min,
+            soc_max=self.config.soc_max,
+            initial_soc=self.config.initial_soc,
         )
-
-        # Resource config
-        resource_config = ResourceConfig(
-            name="battery_true",
-            type="battery",
-            parameters={"initial_soc": self.config.initial_soc},
-        )
-
-        return AdvancedElectrochemicalModel(params, resource_config)
 
     def _extract_features(
         self,
@@ -361,8 +460,8 @@ class DataGenerator:
         plan_start_idx = 0
 
         for t in range(total_steps):
-            # 1. Get TRUE state from electrochemical model
-            true_soc = self.battery.state.soc
+            # 1. Get TRUE state from nonlinear battery model
+            true_soc = self.battery.soc
 
             # 2. Check if we need to re-optimize
             need_reopt = (current_plan is None) or ((t - plan_start_idx) >= reopt_interval)
@@ -418,11 +517,13 @@ class DataGenerator:
 
             targets[t] = action
 
-            # 5. Step TRUE physics model
-            # AdvancedElectrochemicalModel.update() convention: positive = charging
-            state = self.battery.update(power_setpoint=action, dt=dt_seconds)
-            actual_socs[t + 1] = state.soc
-            actual_powers[t] = state.power
+            # 5. Step TRUE nonlinear physics model
+            actual_power = self.battery.update(
+                power_setpoint=action,
+                dt_hours=self.config.time_step_hours,
+            )
+            actual_socs[t + 1] = self.battery.soc
+            actual_powers[t] = actual_power
 
             # Progress logging
             if (t + 1) % progress_interval == 0 or t == total_steps - 1:
