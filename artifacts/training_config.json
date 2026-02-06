@@ -1,0 +1,10 @@
+{
+  "batch_size": 256,
+  "learning_rate": 0.001,
+  "max_epochs": 100,
+  "early_stopping_patience": 10,
+  "lr_scheduler_patience": 5,
+  "lr_scheduler_factor": 0.5,
+  "device": "cpu",
+  "random_seed": 42
+}
