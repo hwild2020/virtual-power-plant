@@ -15,8 +15,13 @@
   - Generation time: ~5 minutes
 - Also fixed bug in models/battery.py (AdvancedElectrochemicalModel.get_max_charge_power)
 
-## Task 3: Student Model - PENDING
+## Task 3: Student Model - COMPLETED
+- Date: 2026-02-06
 - File: src/vpp/learning/models.py
+- Tests: 18/18 passing
+- Architecture: Input(7) → 64 → 64 → 32 → Tanh×P_max → 1
+- Parameters: 6,785
+- Output bounds: [-50, 50] kW enforced by Tanh scaling
 
 ## Task 4: Training Pipeline - PENDING
 - File: src/vpp/learning/train.py
