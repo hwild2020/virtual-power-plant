@@ -437,28 +437,66 @@ class AdvancedElectrochemicalModel(BatteryModel):
     
     def get_max_charge_power(self) -> float:
         """Get maximum charging power with electrochemical constraints."""
-        # Basic constraints from parent class
-        basic_limit = super().get_max_charge_power()
-        
+        # Current limit
+        max_current = self.parameters.max_current
+
+        # Voltage limit
+        voltage_headroom = self.parameters.max_voltage - self.state.voltage
+        if voltage_headroom <= 0:
+            return 0.0
+
+        # SOC limit
+        if self.state.soc >= self.parameters.max_soc:
+            return 0.0
+
+        # Temperature limit
+        if self.state.temperature >= self.parameters.max_temperature:
+            return 0.0
+
+        # Calculate basic power limit
+        basic_limit = min(
+            max_current * self.parameters.nominal_voltage / 1000,  # Current limit
+            voltage_headroom * max_current / 1000  # Voltage limit
+        ) * self.parameters.charge_efficiency
+
         # Concentration constraint (prevent lithium plating)
         if self.surface_concentration > 0.95:
             concentration_limit = 0.0
         else:
             concentration_limit = (0.95 - self.surface_concentration) * self.parameters.max_current * self.parameters.nominal_voltage / 1000
-        
+
         return min(basic_limit, concentration_limit)
-    
+
     def get_max_discharge_power(self) -> float:
         """Get maximum discharging power with electrochemical constraints."""
-        # Basic constraints from parent class
-        basic_limit = super().get_max_discharge_power()
-        
+        # Current limit
+        max_current = self.parameters.max_current
+
+        # Voltage limit
+        voltage_margin = self.state.voltage - self.parameters.min_voltage
+        if voltage_margin <= 0:
+            return 0.0
+
+        # SOC limit
+        if self.state.soc <= self.parameters.min_soc:
+            return 0.0
+
+        # Temperature limit
+        if self.state.temperature <= self.parameters.min_temperature:
+            return 0.0
+
+        # Calculate basic power limit
+        basic_limit = min(
+            max_current * self.parameters.nominal_voltage / 1000,  # Current limit
+            voltage_margin * max_current / 1000  # Voltage limit
+        ) / self.parameters.discharge_efficiency
+
         # Concentration constraint (prevent over-discharge)
         if self.surface_concentration < 0.05:
             concentration_limit = 0.0
         else:
             concentration_limit = (self.surface_concentration - 0.05) * self.parameters.max_current * self.parameters.nominal_voltage / 1000
-        
+
         return min(basic_limit, concentration_limit)
 
 

@@ -44,9 +44,15 @@ Where:
 
 ### Process
 1.  **Initialize:** `Simulator`, `AdvancedElectrochemicalModel`.
-2.  **Horizon:** 30 days @ 15 min resolution = ~2880 steps.
-3.  **Batching:** Solve optimization in 24h chunks (Daily lookahead).
-    - *Note:* Real-world perfect foresight usually assumes day-ahead.
+2.  **Horizon:** 365 days @ 15 min resolution = ~35,040 steps.
+    - *Rationale:* Ensures seasonal coverage and ~10:1 sample-to-parameter ratio.
+3.  **Data Generation Loop (Rolling Horizon / MPC):**
+    -   **Method:** At each time step $t$:
+        1.  Get current true state $S_t$ (SOC, Temp) from `AdvancedElectrochemicalModel`.
+        2.  Teacher solves optimization for horizon $[t, t+24h]$ using `SimpleEquivalentCircuitModel` (Linear Proxy).
+        3.  Extract first action $P^*_t$.
+        4.  Apply $P^*_t$ to `AdvancedElectrochemicalModel` to get $S_{t+1}$.
+    -   *Rationale:* This "Hybrid" approach allows the linear teacher to control the complex non-linear plant, correcting for model mismatch (e.g., efficiency differences) at every step [Literature].
 4.  **Feature Extraction ($X_t$):**
     - `timestamp_hour_sin`, `timestamp_hour_cos` (Cyclical time)
     - `market_price_current`
