@@ -1,0 +1,87 @@
+============================================================
+VPP STUDENT MODEL - XAI ANALYSIS REPORT
+============================================================
+
+Model: artifacts/student_model.pth
+Data: data/training_data.csv
+Analysis Date: 2026-02-06 21:04:02
+Samples Analyzed: 5,000 (stratified from 35,040)
+
+============================================================
+Q1: WHICH FEATURES DRIVE STUDENT DECISIONS MOST?
+============================================================
+
+Global Feature Importance (Mean |SHAP|):
+  Rank   Feature                   Importance
+  ------ -------------------- ---------------
+  1      hour_sin                      9.7129
+  2      net_load                      7.7470
+  3      hour_cos                      4.7257
+  4      soc                           3.8966
+  5      dow_sin                       2.3106
+  6      price_current                 1.6446
+  7      price_avg_4h                  1.0347
+
+Key Insights:
+  - Top 3 features: hour_sin, net_load, hour_cos
+
+============================================================
+Q2: DOES STUDENT LEARN CORRECT PRICE ARBITRAGE LOGIC?
+============================================================
+
+Correlation Analysis (price_current vs SHAP):
+  Spearman ρ: -0.9794
+  Target: ρ < -0.5 (negative correlation)
+  Result: ✓ PASS
+
+Expected Behavior:
+  - High price → Negative SHAP → Push toward discharge
+  - Low price → Positive SHAP → Push toward charge
+
+Observed Behavior (by Price Quantile):
+  Q1: Price=0.0575, SHAP=+3.05 → charge
+  Q2: Price=0.0862, SHAP=+0.84 → charge
+  Q3: Price=0.1099, SHAP=-0.53 → discharge
+  Q4: Price=0.1278, SHAP=-1.32 → discharge
+  Q5: Price=0.1531, SHAP=-2.46 → discharge
+
+Conclusion:
+  ✓ Student successfully learns price arbitrage logic.
+    Model exhibits correct negative correlation between price and SHAP values.
+
+============================================================
+Q3: WHERE/WHEN DOES STUDENT DEVIATE FROM TEACHER?
+============================================================
+
+Overall Performance:
+  Mean Absolute Error: 30.17 kW
+  Max Absolute Error:  91.45 kW
+
+Deviation Hotspots:
+
+  1. SOC Boundaries:
+     - Low boundary (0.1-0.2):  27.85 kW
+     - Normal range (0.2-0.8):  39.47 kW
+     - High boundary (0.8-0.9): 24.13 kW
+
+  2. Price Extremes:
+     - Low prices (<10%ile):  64.58 kW
+     - Normal prices:         23.68 kW
+     - High prices (>90%ile): 47.67 kW
+     → Higher errors at low prices
+     → Higher errors at high prices
+
+  3. Price Transitions:
+     - Rapid changes (>90%ile): 36.75 kW
+     - Normal changes:          29.26 kW
+     → Higher errors during rapid price transitions
+
+Conclusion:
+  Student deviates most from teacher in:
+    1. Price extremes (low): 64.58 kW MAE
+    2. Price extremes (high): 47.67 kW MAE
+    3. Rapid price changes: 36.75 kW MAE
+
+============================================================
+END OF REPORT
+============================================================

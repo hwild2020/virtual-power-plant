@@ -1,0 +1,16 @@
+{
+  "regression_metrics": {
+    "r2_score": 0.8645291679820648,
+    "mae": 8.258368363777539,
+    "rmse": 13.081707115554334
+  },
+  "physical_integrity": {
+    "soc_violation_rate": 0.0,
+    "soc_violations_count": 0
+  },
+  "economic_efficiency": {
+    "teacher_profit": -329.9305743664871,
+    "student_profit": -560.57586561416,
+    "optimality_gap": -0.6990721962962787
+  }
+}

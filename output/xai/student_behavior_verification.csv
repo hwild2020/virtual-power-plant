@@ -1,0 +1,101 @@
+scenario_id,scenario_type,price_current,price_avg_4h,soc,prediction,expected,passed,failure_reason,rationale
+0,high_price_high_soc,0.17513996140117322,0.16638296333111455,0.8215621309439417,-24.663894653320312,discharge,True,,Sell expensive power when battery is full
+1,high_price_high_soc,0.19127953463165193,0.18171555790006932,0.7821777949550525,-8.599331855773926,discharge,False,"Expected |power| > 20.0, got 8.60",Sell expensive power when battery is full
+2,high_price_high_soc,0.1981025780235413,0.18819744912236425,0.720480170160512,-22.472469329833984,discharge,True,,Sell expensive power when battery is full
+3,high_price_high_soc,0.18672098493452124,0.17738493568779518,0.847300436679512,-14.861204147338867,discharge,False,"Expected |power| > 20.0, got 14.86",Sell expensive power when battery is full
+4,high_price_high_soc,0.18091476982829527,0.1718690313368805,0.712707848961716,-4.695229530334473,discharge,False,"Expected |power| > 20.0, got 4.70",Sell expensive power when battery is full
+5,high_price_high_soc,0.15665263931861442,0.1488200073526837,0.7428430876877357,-3.420379400253296,discharge,False,"Expected |power| > 20.0, got 3.42",Sell expensive power when battery is full
+6,high_price_high_soc,0.18535045931488855,0.17608293634914413,0.7127076008074527,-19.06794548034668,discharge,False,"Expected |power| > 20.0, got 19.07",Sell expensive power when battery is full
+7,high_price_high_soc,0.19210653502852204,0.18250120827709593,0.7441164342033186,-1.6271926164627075,discharge,False,"Expected |power| > 20.0, got 1.63",Sell expensive power when battery is full
+8,high_price_high_soc,0.15647652901393783,0.14865270256324092,0.7512769883338222,-13.75003433227539,discharge,False,"Expected |power| > 20.0, got 13.75",Sell expensive power when battery is full
+9,high_price_high_soc,0.1830619754267683,0.17390887665542987,0.7676338797351996,-0.7087533473968506,discharge,False,"Expected |power| > 20.0, got 0.71",Sell expensive power when battery is full
+10,low_price_low_soc,0.07149747060608118,0.07507234413638524,0.19106207132368508,-7.176431179046631,charge,False,"Expected |power| > 20.0, got 7.18",Buy cheap power when battery is empty
+11,low_price_low_soc,0.07090159879550176,0.07444667873527686,0.20799335658703605,-5.3983869552612305,charge,False,"Expected |power| > 20.0, got 5.40",Buy cheap power when battery is empty
+12,low_price_low_soc,0.06763256874373708,0.07101419718092393,0.22414151420066344,10.011037826538086,charge,False,"Expected |power| > 20.0, got 10.01",Buy cheap power when battery is empty
+13,low_price_low_soc,0.05995767644374339,0.06295556026593056,0.2869632755339433,0.5088121294975281,charge,False,"Expected |power| > 20.0, got 0.51",Buy cheap power when battery is empty
+14,low_price_low_soc,0.07567997293750856,0.07946397158438398,0.29400482209198964,8.522509574890137,charge,False,"Expected |power| > 20.0, got 8.52",Buy cheap power when battery is empty
+15,low_price_low_soc,0.07622508373287623,0.08003633791952004,0.20285369747298276,-8.192473411560059,charge,False,"Expected |power| > 20.0, got 8.19",Buy cheap power when battery is empty
+16,low_price_low_soc,0.058227225007518285,0.0611385862578942,0.29975285091406423,-0.5767152309417725,charge,False,"Expected |power| > 20.0, got 0.58",Buy cheap power when battery is empty
+17,low_price_low_soc,0.07032783726269794,0.07384422912583284,0.25707606667707805,9.844704627990723,charge,False,"Expected |power| > 20.0, got 9.84",Buy cheap power when battery is empty
+18,low_price_low_soc,0.0734225360877813,0.07709366289217037,0.22913913085098928,9.632301330566406,charge,False,"Expected |power| > 20.0, got 9.63",Buy cheap power when battery is empty
+19,low_price_low_soc,0.07686119155631191,0.0807042511341275,0.2822391813978653,-9.412263870239258,charge,False,"Expected |power| > 20.0, got 9.41",Buy cheap power when battery is empty
+20,mid_price_mid_soc,0.10193098232513445,0.10193098232513445,0.5743696931758997,-10.99726676940918,idle,True,,No strong arbitrage signal
+21,mid_price_mid_soc,0.11227742957988826,0.11227742957988826,0.5652012977228523,3.418551445007324,idle,True,,No strong arbitrage signal
+22,mid_price_mid_soc,0.10244629166259582,0.10244629166259582,0.585133446182433,-6.56140661239624,idle,True,,No strong arbitrage signal
+23,mid_price_mid_soc,0.11073269461342478,0.11073269461342478,0.5355568020845282,-11.082724571228027,idle,True,,No strong arbitrage signal
+24,mid_price_mid_soc,0.10367227813828644,0.10367227813828644,0.4230340260202604,-9.652962684631348,idle,True,,No strong arbitrage signal
+25,mid_price_mid_soc,0.10071874270596645,0.10071874270596645,0.43638637747949904,6.75208854675293,idle,True,,No strong arbitrage signal
+26,mid_price_mid_soc,0.10161487647444495,0.10161487647444495,0.44994031956842584,2.8849050998687744,idle,True,,No strong arbitrage signal
+27,mid_price_mid_soc,0.11869117027149517,0.11869117027149517,0.5849297601038358,-11.368315696716309,idle,True,,No strong arbitrage signal
+28,mid_price_mid_soc,0.1008026875717858,0.1008026875717858,0.541592451202483,-2.9784395694732666,idle,True,,No strong arbitrage signal
+29,mid_price_mid_soc,0.11894499092997735,0.11894499092997735,0.4712360829943339,5.15684175491333,idle,True,,No strong arbitrage signal
+30,low_price_high_soc,0.07915556146038916,0.08707111760642808,0.7656474568876604,-1.698883295059204,idle_or_small,True,,Cheap power but battery nearly full
+31,low_price_high_soc,0.05375676246131445,0.0591324387074459,0.8205494547891456,-3.207294225692749,idle_or_small,True,,Cheap power but battery nearly full
+32,low_price_high_soc,0.07970813798734275,0.08767895178607703,0.8338759954550852,0.7143574953079224,idle_or_small,True,,Cheap power but battery nearly full
+33,low_price_high_soc,0.07093979513928245,0.0780337746532107,0.8414284576199561,4.697281837463379,idle_or_small,True,,Cheap power but battery nearly full
+34,low_price_high_soc,0.07782557277569978,0.08560813005326977,0.7200951863033231,-8.57088565826416,idle_or_small,True,,Cheap power but battery nearly full
+35,low_price_high_soc,0.07347285105189122,0.08082013615708035,0.8434891441065585,1.3236435651779175,idle_or_small,True,,Cheap power but battery nearly full
+36,low_price_high_soc,0.05993187401700763,0.0659250614187084,0.7433998309753148,-11.083898544311523,idle_or_small,True,,Cheap power but battery nearly full
+37,low_price_high_soc,0.06769599921564659,0.07446559913721125,0.7764010771972578,4.741557598114014,idle_or_small,True,,Cheap power but battery nearly full
+38,low_price_high_soc,0.07820055764595754,0.08602061341055331,0.8003647841443262,-11.907998085021973,idle_or_small,True,,Cheap power but battery nearly full
+39,low_price_high_soc,0.05864168695522344,0.06450585565074579,0.7585518705260331,-6.0488362312316895,idle_or_small,True,,Cheap power but battery nearly full
+40,high_soc_limit,0.14109910892952476,0.14109910892952476,0.8589685398955957,-11.261466979980469,no_charge,True,,"SOC near maximum, cannot charge"
+41,high_soc_limit,0.14733012678982904,0.14733012678982904,0.8554221976072443,-22.890209197998047,no_charge,True,,"SOC near maximum, cannot charge"
+42,high_soc_limit,0.09625884558831499,0.09625884558831499,0.884437149335674,-12.628026008605957,no_charge,True,,"SOC near maximum, cannot charge"
+43,high_soc_limit,0.06725711822597233,0.06725711822597233,0.8864792264044803,-4.022706508636475,no_charge,True,,"SOC near maximum, cannot charge"
+44,high_soc_limit,0.08604920209253594,0.08604920209253594,0.8640537804257221,-10.13980484008789,no_charge,True,,"SOC near maximum, cannot charge"
+45,high_soc_limit,0.08120697394191985,0.08120697394191985,0.8633501422135528,-22.646873474121094,no_charge,True,,"SOC near maximum, cannot charge"
+46,high_soc_limit,0.11899989278797404,0.11899989278797404,0.8517110880268098,-7.367870330810547,no_charge,True,,"SOC near maximum, cannot charge"
+47,high_soc_limit,0.14767829960708484,0.14767829960708484,0.8646082396959099,-7.716193675994873,no_charge,True,,"SOC near maximum, cannot charge"
+48,high_soc_limit,0.06945803198520734,0.06945803198520734,0.8534451447230691,-12.164236068725586,no_charge,True,,"SOC near maximum, cannot charge"
+49,high_soc_limit,0.1090395120210261,0.1090395120210261,0.8722458751477651,-1.6969572305679321,no_charge,True,,"SOC near maximum, cannot charge"
+50,low_soc_limit,0.14057006315482265,0.14057006315482265,0.11597406760436772,-7.662993431091309,no_discharge,False,"Expected ≥0 (no discharge), got -7.66","SOC near minimum, cannot discharge"
+51,low_soc_limit,0.0533631238858881,0.0533631238858881,0.1214684290938606,-3.418240785598755,no_discharge,False,"Expected ≥0 (no discharge), got -3.42","SOC near minimum, cannot discharge"
+52,low_soc_limit,0.065302572293957,0.065302572293957,0.14377457031751362,4.231368541717529,no_discharge,True,,"SOC near minimum, cannot discharge"
+53,low_soc_limit,0.13471178607236992,0.13471178607236992,0.12027047294999091,8.78906536102295,no_discharge,True,,"SOC near minimum, cannot discharge"
+54,low_soc_limit,0.11185110697991357,0.11185110697991357,0.12680153194852695,8.863323211669922,no_discharge,True,,"SOC near minimum, cannot discharge"
+55,low_soc_limit,0.1074335798807826,0.1074335798807826,0.13964551082027485,-10.142522811889648,no_discharge,False,"Expected ≥0 (no discharge), got -10.14","SOC near minimum, cannot discharge"
+56,low_soc_limit,0.09366878257822103,0.09366878257822103,0.12526136133017854,-3.0650229454040527,no_discharge,False,"Expected ≥0 (no discharge), got -3.07","SOC near minimum, cannot discharge"
+57,low_soc_limit,0.06366101633825984,0.06366101633825984,0.12190313745433548,2.9086194038391113,no_discharge,True,,"SOC near minimum, cannot discharge"
+58,low_soc_limit,0.058194462644254666,0.058194462644254666,0.11777714377702705,0.4667501449584961,no_discharge,True,,"SOC near minimum, cannot discharge"
+59,low_soc_limit,0.11987507702596574,0.11987507702596574,0.13948726440612746,-10.50660514831543,no_discharge,False,"Expected ≥0 (no discharge), got -10.51","SOC near minimum, cannot discharge"
+60,price_rising,0.07633106377243168,0.14305383940667826,0.5914782949333548,2.4222586154937744,charge,False,"Expected |power| > 10.0, got 2.42","Price rising, charge now to sell later"
+61,price_rising,0.06000714973334553,0.167115390389286,0.41789137016677813,-2.8549938201904297,charge,False,"Expected |power| > 10.0, got 2.85","Price rising, charge now to sell later"
+62,price_rising,0.07996346652230578,0.14251492717779066,0.3577264050636114,4.7433977127075195,charge,False,"Expected |power| > 10.0, got 4.74","Price rising, charge now to sell later"
+63,price_rising,0.079714223122896,0.16395363658261056,0.4679809233725636,8.961296081542969,charge,False,"Expected |power| > 10.0, got 8.96","Price rising, charge now to sell later"
+64,price_rising,0.07980953486241005,0.14093006302294012,0.38488723575139966,-8.285786628723145,charge,False,"Expected |power| > 10.0, got 8.29","Price rising, charge now to sell later"
+65,price_rising,0.07588557396383622,0.1406173898316659,0.4755433680712339,9.76105785369873,charge,False,"Expected |power| > 10.0, got 9.76","Price rising, charge now to sell later"
+66,price_rising,0.07407476343820482,0.1738318679403244,0.45611808754294847,-7.959451675415039,charge,False,"Expected |power| > 10.0, got 7.96","Price rising, charge now to sell later"
+67,price_rising,0.07153212557099205,0.1502221084719083,0.31419152824072943,2.868722677230835,charge,False,"Expected |power| > 10.0, got 2.87","Price rising, charge now to sell later"
+68,price_rising,0.06445555885789224,0.1440178044079296,0.5971259934405619,-4.491051197052002,charge,False,"Expected |power| > 10.0, got 4.49","Price rising, charge now to sell later"
+69,price_rising,0.0699954211002487,0.15545963443284672,0.5032656691186024,-10.14609146118164,charge,False,"Expected positive (charge), got -10.15","Price rising, charge now to sell later"
+70,price_falling,0.14976699077764036,0.07601141228784736,0.46779927696235496,-5.360805034637451,discharge,False,"Expected |power| > 10.0, got 5.36","Price falling, discharge now before drop"
+71,price_falling,0.14059615693536953,0.07035674610957399,0.4253303455997199,-0.1455901712179184,discharge,False,"Expected |power| > 10.0, got 0.15","Price falling, discharge now before drop"
+72,price_falling,0.15184859754395322,0.07657747796934158,0.6532766507288337,-28.007104873657227,discharge,True,,"Price falling, discharge now before drop"
+73,price_falling,0.15602592339093324,0.06957373283837691,0.5924056760838747,-10.651887893676758,discharge,True,,"Price falling, discharge now before drop"
+74,price_falling,0.15993167094781816,0.07260295254020474,0.42943077224192727,-10.210509300231934,discharge,True,,"Price falling, discharge now before drop"
+75,price_falling,0.17132873134788174,0.07417825397319633,0.5853034547360652,-6.233476161956787,discharge,False,"Expected |power| > 10.0, got 6.23","Price falling, discharge now before drop"
+76,price_falling,0.16355081087749293,0.06460935668777838,0.5500401311505678,-15.652010917663574,discharge,True,,"Price falling, discharge now before drop"
+77,price_falling,0.17366259833624859,0.07881130007158593,0.6411770400973148,-27.841238021850586,discharge,True,,"Price falling, discharge now before drop"
+78,price_falling,0.1422401990337927,0.07034561309886969,0.6835044486406225,-14.380858421325684,discharge,True,,"Price falling, discharge now before drop"
+79,price_falling,0.17483154199339984,0.07809293498353384,0.6059703984817089,-0.08546730130910873,discharge,False,"Expected |power| > 10.0, got 0.09","Price falling, discharge now before drop"
+80,max_arbitrage_buy,0.05,0.18,0.2,0.3507404923439026,charge_max,False,"Expected |power| > 35.0, got 0.35",Extreme buy opportunity
+81,max_arbitrage_buy,0.05,0.18,0.2,0.3507404923439026,charge_max,False,"Expected |power| > 35.0, got 0.35",Extreme buy opportunity
+82,max_arbitrage_buy,0.05,0.18,0.2,0.3507404923439026,charge_max,False,"Expected |power| > 35.0, got 0.35",Extreme buy opportunity
+83,max_arbitrage_buy,0.05,0.18,0.2,0.3507404923439026,charge_max,False,"Expected |power| > 35.0, got 0.35",Extreme buy opportunity
+84,max_arbitrage_buy,0.05,0.18,0.2,0.3507404923439026,charge_max,False,"Expected |power| > 35.0, got 0.35",Extreme buy opportunity
+85,max_arbitrage_sell,0.18,0.05,0.75,-26.070934295654297,discharge_max,False,"Expected |power| > 35.0, got 26.07",Extreme sell opportunity
+86,max_arbitrage_sell,0.18,0.05,0.75,-26.070934295654297,discharge_max,False,"Expected |power| > 35.0, got 26.07",Extreme sell opportunity
+87,max_arbitrage_sell,0.18,0.05,0.75,-26.070934295654297,discharge_max,False,"Expected |power| > 35.0, got 26.07",Extreme sell opportunity
+88,max_arbitrage_sell,0.18,0.05,0.75,-26.070934295654297,discharge_max,False,"Expected |power| > 35.0, got 26.07",Extreme sell opportunity
+89,max_arbitrage_sell,0.18,0.05,0.75,-26.070934295654297,discharge_max,False,"Expected |power| > 35.0, got 26.07",Extreme sell opportunity
+90,impossible_discharge,0.17945913579532202,0.17892450197378967,0.12198404537596724,-1.287691354751587,idle,True,,Want to sell but no energy
+91,impossible_discharge,0.17672318911425355,0.15084843459281716,0.12343950381532362,-2.1572840213775635,idle,True,,Want to sell but no energy
+92,impossible_discharge,0.17013430456203693,0.16143668028005212,0.13168897158381773,-1.4184932708740234,idle,True,,Want to sell but no energy
+93,impossible_discharge,0.16803787032811837,0.1555693629714477,0.16412078465289465,-1.7208456993103027,idle,True,,Want to sell but no energy
+94,impossible_discharge,0.15140792213976054,0.16270413588754157,0.1763009559844268,-0.5151658058166504,idle,True,,Want to sell but no energy
+95,impossible_discharge,0.15292037544364523,0.16437688185673485,0.1393475140290387,-0.3001328706741333,idle,True,,Want to sell but no energy
+96,impossible_discharge,0.1607319870069531,0.1689747767896286,0.1431580056244446,-0.6389481425285339,idle,True,,Want to sell but no energy
+97,impossible_discharge,0.1762430339949645,0.17076905706596582,0.16005614735223694,-1.642566204071045,idle,True,,Want to sell but no energy
+98,impossible_discharge,0.16666102810259953,0.17438000916255345,0.12601070723068478,-0.6918915510177612,idle,True,,Want to sell but no energy
+99,impossible_discharge,0.16765352411501042,0.17790563671182377,0.17408163696699439,-0.9450773000717163,idle,True,,Want to sell but no energy
